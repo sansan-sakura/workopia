@@ -46,3 +46,29 @@
         echo "Partial {$partialPath} is not found";
     }
   }
+
+/**
+ * inspect a value(s)
+ * 
+ * @param mixed $value
+ * @return void
+ */
+
+ function isnpect($value){
+    echo '<pre>';
+    var_dump($value);
+    echo '</pre>';
+ }
+
+/**
+ * inspect a value(s)
+ * 
+ * @param mixed $value
+ * @return void
+ */
+
+ function isnpectAndDie($value){
+    echo '<pre>';
+    die(var_dump($value));
+    echo '</pre>';
+ }
