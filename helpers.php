@@ -18,10 +18,11 @@
   * @return void
   */
 
-  function loadView($name){
+  function loadView($name, $data=[]){
 
   $viewPath=basePath("views/{$name}.view.php");
   if(file_exists($viewPath)){
+    extract($data);
     require $viewPath;
   }  else {
     echo "View {$viewPath} is not found";
@@ -54,7 +55,7 @@
  * @return void
  */
 
- function isnpect($value){
+ function inspect($value){
     echo '<pre>';
     var_dump($value);
     echo '</pre>';
@@ -72,3 +73,13 @@
     die(var_dump($value));
     echo '</pre>';
  }
+
+ /**
+  * format salary
+  * @param string $salary
+  * @return string Formated salary
+  */
+
+  function formatSalary($salary){
+    return '$'.number_format(floatval($salary));
+  }
