@@ -1,4 +1,5 @@
 <?php
+use Framework\Database;
 
 $config= require basePath('config/db.php');
 $db= new Database($config);
@@ -14,5 +15,5 @@ $listings=$db->query('SELECT * FROM listings WHERE id= :id',$params)->fetch();
 
 
 loadView('listings/show',[
-    'listing'=>$listing
+    'listing'=>$listings
 ]);
