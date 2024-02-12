@@ -1,6 +1,9 @@
 <?php
 namespace Framework;
 
+use App\Controllers\ErrorController;
+
+
 class Router{
     protected $routes=[];
 
@@ -25,22 +28,6 @@ class Router{
         ];
     }
 
-
-    /**
-     * 
-     * Load error page
-     * 
-     * @param int httpCode
-     * @return void
-     * 
-     */
-
-     public function error($httpCode=404){
-        http_response_code($httpCode);
-        loadView("/error/{$httpCode}");
-        exit;
-        
-     }
 
     /**
      * 
@@ -108,20 +95,53 @@ class Router{
      * 
      */
 
-     public function route($uri,$method){
+     public function route($uri){
+
+      $requestMethod=$_SERVER["REQUEST_METHOD"];
+
+    
+
 
         foreach ($this->routes as $route){
-            if($route['uri']===$uri && $route['method']===$method){
+         $uriSegments=explode("/",trim($uri,"/"));
+         $routeSegments=explode('/',trim($route['uri'],'/'));
+   
+         $match=true;
+
+         if(count($uriSegments)===count($routeSegments)&&strtoupper($route['method']===$requestMethod))
+         {
+
+            $params=[];
+
+            $match=true;
+
+            for($i=0; $i <count($uriSegments); $i++)
+            {
+               if($routeSegments[$i]!==$uriSegments[$i]&&!preg_match('/\{(.+?)\}/',$routeSegments[$i])){
+                  $match=false;
+                  break;
+               }
+
+               if(preg_match('/\{(.+?)\}/',$routeSegments[$i],$matches))
+               {
+               $params[$matches[1]]=$uriSegments[$i];
+               }
+            }
+
+            if($match){
+
                $controller='App\\Controllers\\'.$route['controller'];
                $controllerMethod=$route['controllerMethod'];
 
                $controllerInstance=new $controller();
-               $controllerInstance->$controllerMethod();
+               $controllerInstance->$controllerMethod($params);
                return ;
-         
+
             }
+         }
+           
         }
-          $this->error();
+ErrorController::notFound();
       
      }
 }
