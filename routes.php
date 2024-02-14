@@ -1,10 +1,5 @@
 <?php
 
-// $router->get('/','controllers/home.php');
-// $router->get('/listings','controllers/listings/index.php');
-// $router->get('/listings/create','controllers/listings/create.php');
-// $router->get('/listing/','controllers/listings/show.php');
-
 $router->get("/",'HomeController@index');
 $router->get("/listings",'ListingsController@index');
 $router->get("/listings/create",'ListingsController@create');
@@ -16,3 +11,10 @@ $router->get("/listing/{id}",'ListingsController@show');
 $router->post("/listings",'ListingsController@store');
 $router->delete('/listings/{id}','ListingsController@destroy');
 $router->put('/listings/{id}','ListingsController@update');
+
+
+$router->get('/auth/register','UserController@create');
+$router->get('/auth/login','UserController@login');
+
+$router->post('/auth/register','UserController@store');
+$router->post('/auth/logout','UserController@logout');
