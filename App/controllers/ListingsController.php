@@ -46,15 +46,16 @@ class ListingsController
 
     public function store(){
 
-         $allowedFields=['title','description','salary','tags','company','address','city','state','phone','email','requirements','benefits',"user_id"];
+        $allowedFields = ['title', 'description', 'salary', 'tags', 'company', 'address', 'city', 'state', 'phone', 'email', 'requirements', 'benefits'];
 
-         $newListingData=array_intersect_key($_POST, array_flip($allowedFields));
-
-         $newListingData['user_id']=Session::get('use')['id'];
-
-         $newListingData=array_map('sanitize', $newListingData);
-
-         $requiredFields=['title','description','email','city','state'];
+        $newListingData = array_intersect_key($_POST, array_flip($allowedFields));
+    
+        $newListingData['user_id'] = Session::get('user')['id'];
+    
+        $newListingData = array_map('sanitize', $newListingData);
+    
+        $requiredFields = ['title', 'description', 'salary', 'email', 'city', 'state'];
+    
 
          $errors=[];
 
@@ -67,8 +68,9 @@ class ListingsController
                if(!empty($errors)){
                loadView("listings/create",['errors'=>$errors,'listing'=>$newListingData]);
                  } else {
-    
-                $this->db->query('INSERT INTO listings (title,description,salary, tags, company, address, city, state, phone, email, requirements, benefits, user_id VALUES (:title, :description, :salary, :tags, :company, :address, :city, :state, :phone, :email, :requirements, :benefits, :user_id)', $newListingData);
+
+
+                $fields=[];
 
                 foreach($newListingData as $field =>$value){
                     $fields[]=$field;
@@ -88,7 +90,7 @@ class ListingsController
 
                $values=implode(', ',$values);
 
-               $query="INSERT INTO listings ({$fields}) VALUES ({$values}";
+               $query="INSERT INTO listings ({$fields}) VALUES ({$values})";
 
                $this->db->query($query, $newListingData);
 
@@ -105,9 +107,7 @@ class ListingsController
             'id'=>$id
         ];
 
-        $listing=$this->db->query('SELECT * FROM listing WHERE id=:id',$params)->fetch();
-
-
+        $listing=$this->db->query('SELECT * FROM listings WHERE id=:id',$params)->fetch();
 
         if(!$listing){
             ErrorController::notFound("listing not found");
@@ -127,8 +127,6 @@ class ListingsController
     }
 
     public function edit($params){
-
-        
         $id=$params['id']??"";
         $params=[
        'id'=>$id ];
@@ -155,6 +153,7 @@ class ListingsController
         $id=$params['id']??"";
         $params=[
        'id'=>$id ];
+
         $listing=$this->db->query('SELECT * FROM listings WHERE id= :id', $params)->fetch();
    
         if(!$listing){
@@ -183,8 +182,8 @@ class ListingsController
             }
         }
    
-        if(empty($errors)){
-            loadView('listing/edit',[
+        if(!empty($errors)){
+            loadView('listings/edit',[
                 'listing'=>$listing,
                 'errors'=>$errors
             ]);
@@ -194,12 +193,13 @@ class ListingsController
             $updateFields=[];
 
             foreach(array_keys($updatedValues) as $field){
-                $updateField[]="{$field}=:{field}";
+                $updateFields[]="{$field}=:{$field}";
+
             }
 
             $updateFields=implode(',',$updateFields);
-
             $updateQuery="UPDATE listings SET $updateFields WHERE id=:id";
+
             $updatedValues['id']=$id;
             $this->db->query($updateQuery, $updatedValues);
 

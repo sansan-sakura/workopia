@@ -43,7 +43,7 @@ try{
  */
 
 
- public function query ($query,$params=[]){
+ public function query ($query, $params=[]){
    try{
     $sth=$this->conn->prepare($query);
 

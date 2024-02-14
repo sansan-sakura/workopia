@@ -21,7 +21,7 @@ class UserController {
 
 
     public function login(){
-        loadView('user/login');
+        loadView('users/login');
     }
 
     public function create(){
